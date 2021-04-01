@@ -46,6 +46,8 @@ unknown_token = "UNKNOWN_TOKEN"
 sentence_start_token = "SENTENCE_START"
 sentence_end_token = "SENTENCE_END"
 
+
+
 # Đọc dữ liệu và thêm SENTENCE_START và SENTENCE_END 
 print ("Reading CSV file...")
 with open('data/reddit-comments-2015-08.csv', encoding="utf8") as f:
@@ -79,16 +81,16 @@ print ("The least frequent word in our vocabulary is '%s' and appeared %d times.
 for i, sent in enumerate(tokenized_sentences):
     tokenized_sentences[i] = [w if w in word_to_index else unknown_token for w in sent]
 
-# Tạo dữ liệu traning
-X_train = np.asarray([[word_to_index[w] for w in sent[:-1]] for sent in tokenized_sentences])
-y_train = np.asarray([[word_to_index[w] for w in sent[1:]] for sent in tokenized_sentences])
+## Tạo dữ liệu traning
+#X_train = np.asarray([[word_to_index[w] for w in sent[:-1]] for sent in tokenized_sentences])
+#y_train = np.asarray([[word_to_index[w] for w in sent[1:]] for sent in tokenized_sentences])
 
 #Tạo model
-model = RNNTheano(vocabulary_size, hidden_dim=_HIDDEN_DIM)
-t1 = time.time()
-model.sgd_step(X_train[10], y_train[10], _LEARNING_RATE)
-t2 = time.time()
-print ("SGD Step time: %f milliseconds" % ((t2 - t1) * 1000.))
+#model = RNNTheano(vocabulary_size, hidden_dim=_HIDDEN_DIM)
+#t1 = time.time()
+#model.sgd_step(X_train[10], y_train[10], _LEARNING_RATE)
+#t2 = time.time()
+#print ("SGD Step time: %f milliseconds" % ((t2 - t1) * 1000.))
 
 model = RNNTheano(vocabulary_size, hidden_dim=50)
 # losses = train_with_sgd(model, X_train, y_train, nepoch=50)
@@ -147,7 +149,7 @@ def returnData(ans):
     return strings
 
 root = Tk()
-root.title('Codemy.com - Auto Select/Search')
+root.title('RNN-Simple Searchbar')
 root.geometry("500x300")
 
 # Update the listbox
@@ -167,15 +169,19 @@ def fillout(e):
 	my_entry.insert(0, my_list.get(ANCHOR))
 
 # Create function to check entry vs listbox
+time_count=0;
 def check(e):
-	# grab what was typed
-	typed = my_entry.get()
+    typed = my_entry.get()
+    global time_count
+    time_count+=1
+    if time_count==5:
+        if typed == '':
+            data = []
+        else:
+            data = returnData(typed)
+        update(data)
+        time_count=0
 
-	if typed == '':
-		data = []
-	else:
-		data = returnData(typed)
-	update(data)				
 
 
 # Create a label
